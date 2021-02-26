@@ -1,10 +1,10 @@
 package com.example.steamnewsrssviewer
 
+import com.example.steamnewsrssviewer.newsdata.SteamNews
 import retrofit2.Call
 import retrofit2.http.GET
-import java.util.*
 
 interface SteamNewsService {
-    @GET("/feeds/news/app/739630")
-    fun getNews(): Call<Rss>
+    @GET("?appid=739630&maxlength=300&format=json")
+    fun getNews(): Call<SteamNews>
 }
