@@ -31,25 +31,25 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.Holder>(){
     }
 
     class Holder(itemView: ItemRecyclerBinding, parent: ViewGroup) : RecyclerView.ViewHolder(itemView.root) {
-        val view: ItemRecyclerBinding = itemView
-        private lateinit var news_data: NewsRecyclerItem
+        private val view: ItemRecyclerBinding = itemView
+        private lateinit var newsData: NewsRecyclerItem
 
         init {
             view.item.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(news_data.url)
+                intent.data = Uri.parse(newsData.url)
                 parent.context.startActivity(intent)
             }
         }
 
         @SuppressLint("SimpleDateFormat")
         fun setNews(news: NewsRecyclerItem){
-            news_data = news
-            view.textTitle.text = news_data.title
+            newsData = news
+            view.textTitle.text = newsData.title
 
             /* convert UNIX timestamp to string */
             val sdf = SimpleDateFormat("yyyy-MM-dd")
-            val date = sdf.format(Date(news_data.date.toLong() * 1000))
+            val date = sdf.format(Date(newsData.date.toLong() * 1000))
             view.textDate.text = date.toString()
         }
     }

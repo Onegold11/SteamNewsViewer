@@ -29,10 +29,20 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 
-        newsUpdate()
+
     }
 
-    private fun newsUpdate(){
+    private fun getSteamAppId(){
+        val data = mutableListOf<>()
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl("https://api.steampowered.com/ISteamApps/GetAppList/v2/")
+                .build()
+
+        val steamAppService = retrofit.create(SteamAppService::class.java)
+    }
+
+    private fun getSteamNews(){
         val data = mutableListOf<NewsRecyclerItem>()
 
         fun notifyRecyclerDataChanged(){
@@ -55,8 +65,6 @@ class MainActivity : AppCompatActivity() {
                     response: Response<SteamNews>
             ) {
                 val news = response.body() as SteamNews
-                val newsId = news.appnews.appid
-                val newsCount = news.appnews.count
 
                 /* Collect news */
                 val items: List<Newsitem> = news.appnews.newsitems
