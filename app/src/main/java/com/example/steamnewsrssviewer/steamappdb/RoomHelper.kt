@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer
+package com.example.steamnewsrssviewer.steamappdb
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
