@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer
+package com.example.steamnewsrssviewer.retrofitservice
 
 import com.example.steamnewsrssviewer.newsdata.SteamNews
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer
+package com.example.steamnewsrssviewer.retrofitservice
 
 import com.example.steamnewsrssviewer.newsdata.SteamNews
 import com.example.steamnewsrssviewer.steamappdata.SteamAppData
@@ -7,5 +7,5 @@ import retrofit2.http.GET
 
 interface SteamAppService {
     @GET("?")
-    fun getSteamApp(): Call<SteamAppData>
+    fun getSteamAppList(): Call<SteamAppData>
 }
