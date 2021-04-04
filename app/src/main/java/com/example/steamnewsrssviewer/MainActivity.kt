@@ -18,6 +18,7 @@ import com.example.steamnewsrssviewer.steamappdata.App
 import com.example.steamnewsrssviewer.steamappdata.SteamAppDetailData
 import com.example.steamnewsrssviewer.steamappdata.SteamAppData
 import com.example.steamnewsrssviewer.steamappdb.RoomHelper
+import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,9 +41,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        /* Set Toolbar */
-        //setSupportActionBar(findViewById(R.id.toolbar))
 
         /* Set bottom navigation bar */
         binding.bottomNavigationView.setOnNavigationItemSelectedListener { it ->
@@ -72,11 +70,10 @@ class MainActivity : AppCompatActivity() {
         requestSteamAppList()
     }
 
-    private fun setFragment(fragment: SteamAppFragment) {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.frameLayout, fragment)
+    private fun setFragment(fragment: SteamAppFragment) = supportFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
             .commit()
-    }
+
 
     /* Search Steam Game and insert database */
     private fun requestSteamAppList() {
@@ -85,11 +82,12 @@ class MainActivity : AppCompatActivity() {
             .getSteamAppList().enqueue(object : Callback<SteamAppData> {
                 override fun onResponse(
                     call: Call<SteamAppData>,
-                    response: Response<SteamAppData>    
+                    response: Response<SteamAppData>
                 ) {
                     val steamApps = response.body() as SteamAppData
+                    val list = steamApps.applist.apps.map { RoomSteamApp(it.appid, it.name) }
 
-                    helper?.insertSteamAppsToDB(steamApps.applist.apps)
+                    helper?.insertSteamAppsToDB(list)
                 }
 
                 override fun onFailure(call: Call<SteamAppData>, t: Throwable) {}
@@ -107,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<Map<String, SteamAppDetailData>>
                 ) {
                     val appDetail = response.body()?.get(id)
-                    Log.d(MAIN_TAG, "Found start ${appDetail}")
+                    Log.d(MAIN_TAG, "Found start $appDetail")
                     if (appDetail?.data?.type == "game") {
                         Log.d(MAIN_TAG, "Found Game")
                     }

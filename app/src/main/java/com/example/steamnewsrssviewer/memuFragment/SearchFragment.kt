@@ -19,6 +19,7 @@ import com.example.steamnewsrssviewer.steamappdata.App
 import com.example.steamnewsrssviewer.steamappdb.RoomHelper
 import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
 import kotlinx.coroutines.*
+import kotlin.concurrent.thread
 
 class SearchFragment : SteamAppFragment() {
     private lateinit var binding: FragmentSearchBinding

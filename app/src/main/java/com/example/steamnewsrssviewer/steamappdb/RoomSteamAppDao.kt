@@ -8,7 +8,7 @@ interface RoomSteamAppDao {
     @Query("select * from orm_steam_app")
     fun getAll(): List<RoomSteamApp>
 
-    @Query("select * from orm_steam_app where title like :title ")
+    @Query("select * from orm_steam_app where name like :title ")
     fun getSteamAppByTitle(title: String): List<RoomSteamApp>
 
     @Query("select count(*) from orm_steam_app")
@@ -17,12 +17,8 @@ interface RoomSteamAppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(steamApp: RoomSteamApp)
 
-    @Transaction
-    fun insertAll(steamApps: List<App>){
-        for(data in steamApps){
-            insert(RoomSteamApp(data.appid, data.name))
-        }
-    }
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(items: Iterable<RoomSteamApp>)
 
     @Delete
     fun delete(steamApp: RoomSteamApp)

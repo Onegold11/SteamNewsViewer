@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "orm_steam_app")
 class RoomSteamApp(
     @PrimaryKey
-    @ColumnInfo var appId: Int, @ColumnInfo var title: String
+    @ColumnInfo(name = "id") var appid: Int,
+    @ColumnInfo(name = "name") var name: String
 ) {
 
 }

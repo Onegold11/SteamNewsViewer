@@ -26,9 +26,14 @@ abstract class RoomHelper: RoomDatabase() {
     }
 
     /* Insert Steam app data(name, id) to database(room) */
-    fun insertSteamAppsToDB(data: List<App>) =
+    fun insertSteamAppsToDB(data: List<RoomSteamApp>) =
         GlobalScope.launch {
             INSTANCE?.roomSteamAppDao()?.insertAll(data)
+        }
+
+    fun getCount() =
+        GlobalScope.launch {
+            INSTANCE?.roomSteamAppDao()?.getCount()
         }
 
     suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {

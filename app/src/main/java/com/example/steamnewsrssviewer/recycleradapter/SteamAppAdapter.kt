@@ -1,12 +1,14 @@
 package com.example.steamnewsrssviewer.recycleradapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.MainActivity
+import com.example.steamnewsrssviewer.NewsListActivity
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.AppRecyclerItemBinding
 import com.example.steamnewsrssviewer.steamappdata.App
@@ -36,8 +38,17 @@ class SteamAppAdapter : RecyclerView.Adapter<SteamAppAdapter.Holder>() {
         private lateinit var newsData: RoomSteamApp
 
         init {
-            view.item.setOnClickListener {
-                Log.d(MainActivity.MAIN_TAG, "${newsData.title}/${newsData.appId}")
+            /* image click listener */
+            view.imageView.setOnClickListener {
+                Log.d(MainActivity.MAIN_TAG, "${newsData.name}/${newsData.appid}")
+                val intent = Intent(parent.context, NewsListActivity::class.java).apply {
+                    putExtra("id", newsData.appid)
+                }
+                parent.context.startActivity(intent)
+            }
+
+            /* favorite button click listener */
+            view.checkBox.setOnClickListener {
             }
         }
 
@@ -46,13 +57,12 @@ class SteamAppAdapter : RecyclerView.Adapter<SteamAppAdapter.Holder>() {
             newsData = app
 
             /* Set app title in textView */
-            view.textTitle.text = newsData.title
+            view.textTitle.text = "${newsData.name}"
 
-            /* Set app id in textView */
-            view.textId.text = "App ID : ${newsData.appId}"
+            view.textAppid.text = "APP ID(${newsData.appid})"
 
             /* Set imageView using Glide */
-            val imageUrl = IMAGE_URL_PRE + app.appId + IMAGE_URL_POST
+            val imageUrl = IMAGE_URL_PRE + app.appid + IMAGE_URL_POST
             Glide.with(itemView)
                 .load(imageUrl)
                 .placeholder(R.mipmap.ic_launcher)
