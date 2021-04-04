@@ -11,10 +11,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.recycleradapter.SteamAppAdapter
 import com.example.steamnewsrssviewer.databinding.FragmentSearchBinding
+import com.example.steamnewsrssviewer.fragment.NewsFragment
 import com.example.steamnewsrssviewer.steamappdata.App
 import com.example.steamnewsrssviewer.steamappdb.RoomHelper
 import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
@@ -23,10 +27,9 @@ import kotlin.concurrent.thread
 
 class SearchFragment : SteamAppFragment() {
     private lateinit var binding: FragmentSearchBinding
-    private var adapter = SteamAppAdapter()
+    private var adapter = SteamAppAdapter(this)
     private var mainActivity: MainActivity? = null
     private var helper: RoomHelper? = null
-    private val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,7 +43,6 @@ class SearchFragment : SteamAppFragment() {
     ): View? {
         /* view binding */
         binding = FragmentSearchBinding.inflate(inflater, container, false)
-        val view = binding.root
 
         /* Steam News Recycler view */
         binding.recyclerView.adapter = adapter
@@ -48,14 +50,14 @@ class SearchFragment : SteamAppFragment() {
 
         /* button click listener */
         binding.searchButton.setOnClickListener {
-            scope.launch {
+            GlobalScope.launch(Dispatchers.Main) {
                 showSteamAppByTitle(binding.searEditText.text.toString())
             }
         }
 
         helper = RoomHelper.getSteamAppDao(mainActivity as Context)
 
-        return view
+        return binding.root
     }
 
     private suspend fun showSteamAppByTitle(title: String) =
@@ -66,9 +68,12 @@ class SearchFragment : SteamAppFragment() {
             adapter.notifyDataSetChanged()
         }
 
+    fun setFragmentResult(result: String) {
+        setFragmentResult("requestKey", bundleOf("id" to result))
+        requestFragmentChange()
+    }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) {}
+    private fun requestFragmentChange() {
+        mainActivity?.setFragment(NewsFragment())
     }
 }

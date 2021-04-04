@@ -38,7 +38,7 @@ abstract class RoomHelper: RoomDatabase() {
 
     suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {
         var result: List<RoomSteamApp>? = null
-        withContext(CoroutineScope(Dispatchers.IO).coroutineContext) {
+        withContext(Dispatchers.IO) {
             result = INSTANCE?.roomSteamAppDao()?.getSteamAppByTitle(title)
         }
         return result

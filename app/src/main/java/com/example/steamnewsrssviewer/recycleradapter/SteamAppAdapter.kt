@@ -1,25 +1,27 @@
 package com.example.steamnewsrssviewer.recycleradapter
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.steamnewsrssviewer.MainActivity
-import com.example.steamnewsrssviewer.NewsListActivity
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.AppRecyclerItemBinding
-import com.example.steamnewsrssviewer.steamappdata.App
+import com.example.steamnewsrssviewer.memuFragment.SearchFragment
 import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
 
-class SteamAppAdapter : RecyclerView.Adapter<SteamAppAdapter.Holder>() {
+private const val IMAGE_URL_PRE = "https://cdn.akamai.steamstatic.com/steam/apps/"
+private const val IMAGE_URL_POST = "/header.jpg"
+
+class SteamAppAdapter(fragment: SearchFragment) : RecyclerView.Adapter<SteamAppAdapter.Holder>() {
     var listData: List<RoomSteamApp> = mutableListOf()
+    var fragment = fragment
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = AppRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return Holder(binding, parent)
+        return Holder(binding, this)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -31,20 +33,14 @@ class SteamAppAdapter : RecyclerView.Adapter<SteamAppAdapter.Holder>() {
         return listData.size
     }
 
-    class Holder(itemView: AppRecyclerItemBinding, parent: ViewGroup) : RecyclerView.ViewHolder(itemView.root) {
-        private val IMAGE_URL_PRE = "https://cdn.akamai.steamstatic.com/steam/apps/"
-        private val IMAGE_URL_POST = "/header.jpg"
+    class Holder(itemView: AppRecyclerItemBinding, root: SteamAppAdapter) : RecyclerView.ViewHolder(itemView.root) {
         private val view: AppRecyclerItemBinding = itemView
         private lateinit var newsData: RoomSteamApp
 
         init {
             /* image click listener */
             view.imageView.setOnClickListener {
-                Log.d(MainActivity.MAIN_TAG, "${newsData.name}/${newsData.appid}")
-                val intent = Intent(parent.context, NewsListActivity::class.java).apply {
-                    putExtra("id", newsData.appid)
-                }
-                parent.context.startActivity(intent)
+                root.fragment.setFragmentResult(newsData.appid.toString())
             }
 
             /* favorite button click listener */

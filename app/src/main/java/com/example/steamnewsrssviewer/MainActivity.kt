@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         requestSteamAppList()
     }
 
-    private fun setFragment(fragment: SteamAppFragment) = supportFragmentManager.beginTransaction()
+    fun setFragment(fragment: SteamAppFragment) = supportFragmentManager.beginTransaction()
             .replace(R.id.frameLayout, fragment)
             .commit()
 
@@ -117,47 +117,6 @@ class MainActivity : AppCompatActivity() {
                     t: Throwable
                 ) {
                     Log.d(MAIN_TAG, t.message.toString())
-                }
-            })
-    }
-
-    private fun getSteamNews() {
-        val data = mutableListOf<NewsRecyclerItem>()
-
-        fun notifyRecyclerDataChanged() {
-            this.adapter.listData = data
-            this.adapter.notifyDataSetChanged()
-        }
-
-        /* Setting retrofit, steam news service */
-        RestfulAdapter
-            .getSteamNewsApi()
-            .getNews().enqueue(object : Callback<SteamNews> {
-                /* Success request, send news item to recycler adapter */
-                override fun onResponse(
-                    call: Call<SteamNews>,
-                    response: Response<SteamNews>
-                ) {
-                    val news = response.body() as SteamNews
-
-                    /* Collect news */
-                    val items: List<Newsitem> = news.appnews.newsitems
-                    for (item in items) {
-                        data.add(
-                            NewsRecyclerItem(
-                                title = item.title,
-                                date = item.date,
-                                url = item.url
-                            )
-                        )
-                    }
-
-                    /* Change recycler data */
-                    notifyRecyclerDataChanged()
-                }
-
-                override fun onFailure(call: Call<SteamNews>, t: Throwable) {
-                    Log.d("failure", t.printStackTrace().toString())
                 }
             })
     }
