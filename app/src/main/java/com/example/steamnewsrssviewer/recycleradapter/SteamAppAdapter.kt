@@ -40,7 +40,7 @@ class SteamAppAdapter(fragment: SearchFragment) : RecyclerView.Adapter<SteamAppA
         init {
             /* image click listener */
             view.imageView.setOnClickListener {
-                root.fragment.setFragmentResult(newsData.appid.toString())
+                root.fragment.requestFragmentChange(newsData.appid.toString())
             }
 
             /* favorite button click listener */

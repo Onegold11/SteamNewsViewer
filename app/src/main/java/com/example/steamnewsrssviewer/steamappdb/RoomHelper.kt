@@ -14,33 +14,37 @@ abstract class RoomHelper: RoomDatabase() {
     companion object {
         private var INSTANCE: RoomHelper? = null
 
-        fun getSteamAppDao(context: Context): RoomHelper{
-            INSTANCE = INSTANCE ?: Room.databaseBuilder(context.applicationContext, RoomHelper::class.java, "room_steam_app")
-                    .build()
+        fun getSteamAppDao(context: Context): RoomHelper {
+            INSTANCE = INSTANCE ?: Room.databaseBuilder(
+                context.applicationContext,
+                RoomHelper::class.java,
+                "room_steam_app"
+            ).build()
             return INSTANCE!!
         }
 
-        fun destroy(){
+        fun destroy() {
             INSTANCE = null
         }
-    }
 
-    /* Insert Steam app data(name, id) to database(room) */
-    fun insertSteamAppsToDB(data: List<RoomSteamApp>) =
-        GlobalScope.launch {
-            INSTANCE?.roomSteamAppDao()?.insertAll(data)
-        }
 
-    fun getCount() =
-        GlobalScope.launch {
-            INSTANCE?.roomSteamAppDao()?.getCount()
-        }
+        /* Insert Steam app data(name, id) to database(room) */
+        fun insertSteamAppsToDB(data: List<RoomSteamApp>) =
+            GlobalScope.launch {
+                INSTANCE?.roomSteamAppDao()?.insertAll(data)
+            }
 
-    suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {
-        var result: List<RoomSteamApp>? = null
-        withContext(Dispatchers.IO) {
-            result = INSTANCE?.roomSteamAppDao()?.getSteamAppByTitle(title)
+        fun getCount() =
+            GlobalScope.launch {
+                INSTANCE?.roomSteamAppDao()?.getCount()
+            }
+
+        suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {
+            var result: List<RoomSteamApp>? = null
+            withContext(Dispatchers.IO) {
+                result = INSTANCE?.roomSteamAppDao()?.getSteamAppByTitle(title)
+            }
+            return result
         }
-        return result
     }
 }

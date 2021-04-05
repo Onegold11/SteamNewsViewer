@@ -1,35 +1,22 @@
 package com.example.steamnewsrssviewer.memuFragment
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.recycleradapter.SteamAppAdapter
 import com.example.steamnewsrssviewer.databinding.FragmentSearchBinding
 import com.example.steamnewsrssviewer.fragment.NewsFragment
-import com.example.steamnewsrssviewer.steamappdata.App
 import com.example.steamnewsrssviewer.steamappdb.RoomHelper
-import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
 import kotlinx.coroutines.*
-import kotlin.concurrent.thread
 
 class SearchFragment : SteamAppFragment() {
     private lateinit var binding: FragmentSearchBinding
     private var adapter = SteamAppAdapter(this)
     private var mainActivity: MainActivity? = null
-    private var helper: RoomHelper? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -55,8 +42,6 @@ class SearchFragment : SteamAppFragment() {
             }
         }
 
-        helper = RoomHelper.getSteamAppDao(mainActivity as Context)
-
         return binding.root
     }
 
@@ -64,16 +49,12 @@ class SearchFragment : SteamAppFragment() {
         coroutineScope {
             val queryTitle = "${title}%"
 
-            adapter.listData = helper?.getSteamAppByTitle(queryTitle)!!
+            adapter.listData = RoomHelper.getSteamAppByTitle(queryTitle)!!
             adapter.notifyDataSetChanged()
         }
 
-    fun setFragmentResult(result: String) {
-        setFragmentResult("requestKey", bundleOf("id" to result))
-        requestFragmentChange()
-    }
 
-    private fun requestFragmentChange() {
-        mainActivity?.setFragment(NewsFragment())
+    fun requestFragmentChange(result: String) {
+        mainActivity?.setFragment(NewsFragment(result))
     }
 }
