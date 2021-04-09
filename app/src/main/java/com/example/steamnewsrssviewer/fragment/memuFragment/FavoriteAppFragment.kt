@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.steamnewsrssviewer.MainActivity
-import com.example.steamnewsrssviewer.databinding.FragmentSearchBinding
+import com.example.steamnewsrssviewer.databinding.FragmentFavoriteAppBinding
 import com.example.steamnewsrssviewer.fragment.NewsFragment
 import com.example.steamnewsrssviewer.memuFragment.AppRecyclerFragment
 import com.example.steamnewsrssviewer.memuFragment.SteamFragment
@@ -18,8 +18,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchFragment : SteamFragment(), AppRecyclerFragment {
-    private lateinit var binding: FragmentSearchBinding
+class FavoriteAppFragment : SteamFragment(), AppRecyclerFragment {
+    private lateinit var binding: FragmentFavoriteAppBinding
     private var adapter = SteamAppAdapter(this)
     private var mainActivity: MainActivity? = null
 
@@ -34,32 +34,25 @@ class SearchFragment : SteamFragment(), AppRecyclerFragment {
         savedInstanceState: Bundle?
     ): View? {
         /* view binding */
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding = FragmentFavoriteAppBinding.inflate(inflater, container, false)
 
         /* Steam News Recycler view */
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(mainActivity)
+        binding.recyclerView3.adapter = adapter
+        binding.recyclerView3.layoutManager = LinearLayoutManager(mainActivity)
 
-        /* button click listener */
-        binding.searchButton.setOnClickListener {
-            showSteamAppByTitle(binding.searEditText.text.toString())
-        }
+        /* Set recycler data from database */
+        setFavoriteApp()
 
         return binding.root
     }
 
-    private fun showSteamAppByTitle(title: String) =
+    private fun setFavoriteApp() =
         GlobalScope.launch {
-            val queryTitle = "${title}%"
-
-            withContext(Dispatchers.IO) {
-                adapter.listData = RoomSteamAppHelper.getSteamAppByTitle(queryTitle)!!
-                withContext(Dispatchers.Main) {
-                    adapter.notifyDataSetChanged()
-                }
+            adapter.listData = RoomSteamAppHelper.getFavoriteApp()!!
+            withContext(Dispatchers.Main) {
+                adapter.notifyDataSetChanged()
             }
         }
-
 
     override fun requestFragmentChange(result: String) {
         mainActivity?.setFragmentAndSave(NewsFragment(result))

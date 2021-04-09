@@ -1,20 +1,20 @@
 package com.example.steamnewsrssviewer
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.example.steamnewsrssviewer.databinding.ActivityMainBinding
-import com.example.steamnewsrssviewer.memuFragment.SearchFragment
-import com.example.steamnewsrssviewer.memuFragment.SteamAppFragment
-import com.example.steamnewsrssviewer.recycleradapter.NewsAdapter
+import com.example.steamnewsrssviewer.fragment.memuFragment.FavoriteAppFragment
+import com.example.steamnewsrssviewer.fragment.memuFragment.SearchFragment
+import com.example.steamnewsrssviewer.memuFragment.SteamFragment
 import com.example.steamnewsrssviewer.retrofitservice.RestfulAdapter
-import com.example.steamnewsrssviewer.steamappdata.SteamAppDetailData
 import com.example.steamnewsrssviewer.steamappdata.SteamAppData
-import com.example.steamnewsrssviewer.steamappdb.RoomHelper
-import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
+import com.example.steamnewsrssviewer.steamappdata.SteamAppDetailData
+import com.example.steamnewsrssviewer.steamappdb.RoomSteamAppHelper
+import com.example.steamnewsrssviewer.steamappdb.vo.RoomSteamApp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityMainBinding
+
+    private val fragmentStack = Stack<SteamFragment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,14 +33,18 @@ class MainActivity : AppCompatActivity() {
         /* Set bottom navigation bar */
         binding.bottomNavigationView.setOnNavigationItemSelectedListener { it ->
             when (it.itemId) {
-                R.id.favorites_menu_item -> {
+                R.id.search_menu_item -> {
+                    fragmentStack.clear()
+                    setFragmentAndSave(SearchFragment())
                     true
                 }
-                R.id.search_menu_item -> {
-                    setFragment(SearchFragment())
+                R.id.favorites_menu_item -> {
+                    fragmentStack.clear()
+                    setFragmentAndSave(FavoriteAppFragment())
                     true
                 }
                 R.id.library_app_menu_item -> {
+                    fragmentStack.clear()
                     true
                 }
                 else -> false
@@ -46,18 +52,36 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* Set content fragment */
-        setFragment(SearchFragment())
+        setFragmentAndSave(SearchFragment())
 
-        /* Steam App DB(singleton) */
-        RoomHelper.getSteamAppDao(this)
+        /* Steam app DB(singleton) */
+        RoomSteamAppHelper.getSteamAppDao(this)
 
         /* Request steam to all steam app */
         requestSteamAppList()
     }
 
-    fun setFragment(fragment: SteamAppFragment) = supportFragmentManager.beginTransaction()
-        .replace(R.id.frameLayout, fragment)
-        .commit()
+    override fun onBackPressed() {
+        if(fragmentStack.size <= 1) {
+            super.onBackPressed()
+        }else{
+            fragmentStack.pop()
+            val previousFragment = fragmentStack.pop()
+            setFragment(previousFragment)
+            fragmentStack.push(previousFragment)
+        }
+    }
+
+    fun setFragmentAndSave(fragment: SteamFragment) {
+        setFragment(fragment)
+        fragmentStack.push(fragment)
+    }
+
+    private fun setFragment(fragment: SteamFragment){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
+            .commit()
+    }
 
 
     /* Search Steam Game and insert database */
@@ -69,9 +93,8 @@ class MainActivity : AppCompatActivity() {
                     response: Response<SteamAppData>
                 ) {
                     val steamApps = response.body() as SteamAppData
-                    val list = steamApps.applist.apps.map { RoomSteamApp(it.appid, it.name) }
-
-                    RoomHelper.insertSteamAppsToDB(list)
+                    val list = steamApps.applist.apps.map { RoomSteamApp(it.appid, it.name, false) }
+                    RoomSteamAppHelper.insertSteamAppsToDB(list)
                 }
 
                 override fun onFailure(call: Call<SteamAppData>, t: Throwable) {}

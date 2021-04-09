@@ -3,46 +3,45 @@ package com.example.steamnewsrssviewer.recycleradapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.NewsRecyclerItemBinding
-import com.example.steamnewsrssviewer.newsdata.NewsRecyclerItem
+import com.example.steamnewsrssviewer.recycleradapter.data.NewsRecyclerItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
-class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.Holder>(){
-    var listData: List<NewsRecyclerItem> = mutableListOf()
+class NewsAdapter : RecyclerView.Adapter<NewsAdapter.Holder>() {
+    var listData: List<NewsRecyclerItem> = listOf()
+    private lateinit var binding: NewsRecyclerItemBinding
+    private lateinit var parent: ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val binding = NewsRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return Holder(binding, parent)
+        this.binding =
+            NewsRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        this.parent = parent
+        return Holder(this.binding, this.parent)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val news = listData[position]
-        holder.setNews(news)
-    }
+    override fun onBindViewHolder(holder: Holder, position: Int) =
+        holder.setNews(listData[position])
 
-    override fun getItemCount(): Int {
-        return listData.size
-    }
+    override fun getItemCount(): Int = listData.size
 
-    class Holder(itemView: NewsRecyclerItemBinding, parent: ViewGroup) : RecyclerView.ViewHolder(itemView.root) {
-        private val view: NewsRecyclerItemBinding = itemView
+
+    class Holder(private val binding: NewsRecyclerItemBinding, private val parent: ViewGroup) :
+        RecyclerView.ViewHolder(binding.root) {
         private lateinit var newsData: NewsRecyclerItem
 
         init {
-            view.item.setOnClickListener {
+            binding.item.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(newsData.url)
                 parent.context.startActivity(intent)
@@ -50,40 +49,45 @@ class NewsAdapter() : RecyclerView.Adapter<NewsAdapter.Holder>(){
         }
 
         @SuppressLint("SimpleDateFormat")
-        fun setNews(news: NewsRecyclerItem){
+        fun setNews(news: NewsRecyclerItem) {
             newsData = news
-            view.textTitle.text = newsData.title
+            binding.textTitle.text = newsData.title
 
             /* convert UNIX timestamp to string */
             val sdf = SimpleDateFormat("yyyy-MM-dd")
             val date = sdf.format(Date(newsData.date.toLong() * 1000))
-            view.textDate.text = date.toString()
+            binding.textDate.text = date.toString()
+
 
             /* Set preview image */
-            GlobalScope.launch {
-                val previewUrl = getPreviewImageUrl()
+            GlobalScope.launch(Dispatchers.Main) {
+                val imageUrl = getPreviewImageUrl(newsData.url)
 
-                withContext(Dispatchers.Main) {
+                /* Preview image not exist */
+                if(imageUrl != ""){
                     Glide.with(itemView)
-                        .load(previewUrl)
-                        .placeholder(R.mipmap.ic_launcher)
+                        .load(imageUrl)
                         .error(R.mipmap.ic_error)
-                        .into(view.imageView2)
+                        .override(200, 100)
+                        .into(binding.imageView2)
+                }else{
+                    Glide.with(itemView)
+                        .load(R.drawable.ic_baseline_no_image_24)
+                        .override(200, 100)
+                        .into(binding.imageView2)
                 }
             }
         }
 
-        suspend fun getPreviewImageUrl(): String{
-            var imageUrl: String
-            withContext(Dispatchers.IO){
-                try {
-                    val doc = Jsoup.connect(newsData.url).get()
-                    imageUrl = doc.select("meta[property=og:image]")[0].attr("content")
-                }catch (e: Exception){
-                    imageUrl = ""
+        private suspend fun getPreviewImageUrl(url: String): String =
+            withContext(Dispatchers.IO) {
+                return@withContext try {
+                    val doc = Jsoup.connect(url).get()
+                    doc.select("meta[property=og:image]")[0].attr("content")
+                } catch (e: Exception) {
+                    ""
                 }
             }
-            return imageUrl
-        }
+
     }
 }

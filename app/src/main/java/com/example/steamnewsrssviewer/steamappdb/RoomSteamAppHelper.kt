@@ -1,24 +1,24 @@
 package com.example.steamnewsrssviewer.steamappdb
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.steamnewsrssviewer.steamappdata.App
+import com.example.steamnewsrssviewer.steamappdb.dao.RoomSteamAppDao
+import com.example.steamnewsrssviewer.steamappdb.vo.RoomSteamApp
 import kotlinx.coroutines.*
 
 @Database(entities = [RoomSteamApp::class], version = 1, exportSchema = false)
-abstract class RoomHelper: RoomDatabase() {
+abstract class RoomSteamAppHelper: RoomDatabase() {
     abstract fun roomSteamAppDao(): RoomSteamAppDao
 
     companion object {
-        private var INSTANCE: RoomHelper? = null
+        private var INSTANCE: RoomSteamAppHelper? = null
 
-        fun getSteamAppDao(context: Context): RoomHelper {
+        fun getSteamAppDao(context: Context): RoomSteamAppHelper {
             INSTANCE = INSTANCE ?: Room.databaseBuilder(
                 context.applicationContext,
-                RoomHelper::class.java,
+                RoomSteamAppHelper::class.java,
                 "room_steam_app"
             ).build()
             return INSTANCE!!
@@ -42,12 +42,23 @@ abstract class RoomHelper: RoomDatabase() {
                     INSTANCE?.roomSteamAppDao()?.getCount()
             }
 
-        suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {
-            var result: List<RoomSteamApp>? = null
+        /* Search app by title */
+        suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? =
             withContext(Dispatchers.IO) {
-                result = INSTANCE?.roomSteamAppDao()?.getSteamAppByTitle(title)
+                return@withContext INSTANCE?.roomSteamAppDao()?.getSteamAppByTitle(title)
             }
-            return result
-        }
+
+        /* Search app by favorite */
+        suspend fun getFavoriteApp(): List<RoomSteamApp>? =
+            withContext(Dispatchers.IO){
+                return@withContext INSTANCE?.roomSteamAppDao()?.getFavoriteApp(true)
+            }
+
+
+        /* Update favorite */
+        fun updateFavoriteApp(app: RoomSteamApp) =
+            GlobalScope.launch(Dispatchers.IO){
+                INSTANCE?.roomSteamAppDao()?.updateUsers(app)
+            }
     }
 }
