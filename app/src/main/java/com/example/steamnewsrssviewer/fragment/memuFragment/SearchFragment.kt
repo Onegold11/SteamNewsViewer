@@ -10,10 +10,10 @@ import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.recycleradapter.SteamAppAdapter
 import com.example.steamnewsrssviewer.databinding.FragmentSearchBinding
 import com.example.steamnewsrssviewer.fragment.NewsFragment
-import com.example.steamnewsrssviewer.steamappdb.RoomHelper
+import com.example.steamnewsrssviewer.steamappdb.RoomSteamAppHelper
 import kotlinx.coroutines.*
 
-class SearchFragment : SteamAppFragment() {
+class SearchFragment : SteamFragment(), AppRecyclerFragment {
     private lateinit var binding: FragmentSearchBinding
     private var adapter = SteamAppAdapter(this)
     private var mainActivity: MainActivity? = null
@@ -37,24 +37,26 @@ class SearchFragment : SteamAppFragment() {
 
         /* button click listener */
         binding.searchButton.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                showSteamAppByTitle(binding.searEditText.text.toString())
-            }
+            showSteamAppByTitle(binding.searEditText.text.toString())
         }
 
         return binding.root
     }
 
-    private suspend fun showSteamAppByTitle(title: String) =
-        coroutineScope {
+    private fun showSteamAppByTitle(title: String) =
+        GlobalScope.launch {
             val queryTitle = "${title}%"
 
-            adapter.listData = RoomHelper.getSteamAppByTitle(queryTitle)!!
-            adapter.notifyDataSetChanged()
+            withContext(Dispatchers.IO) {
+                adapter.listData = RoomSteamAppHelper.getSteamAppByTitle(queryTitle)!!
+                withContext(Dispatchers.Main) {
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
 
 
-    fun requestFragmentChange(result: String) {
-        mainActivity?.setFragment(NewsFragment(result))
+    override fun requestFragmentChange(result: String) {
+        mainActivity?.setFragmentAndSave(NewsFragment(result))
     }
 }

@@ -1,8 +1,5 @@
 package com.example.steamnewsrssviewer.steamappdata
 
-import com.example.steamnewsrssviewer.steamappdb.RoomSteamApp
-import com.google.gson.annotations.SerializedName
-
 data class SteamAppData(
     val applist: Applist
 )

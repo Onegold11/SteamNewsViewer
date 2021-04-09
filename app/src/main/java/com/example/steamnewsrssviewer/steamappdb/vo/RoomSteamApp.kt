@@ -9,6 +9,4 @@ class RoomSteamApp(
     @PrimaryKey
     @ColumnInfo(name = "id") var appid: Int,
     @ColumnInfo(name = "name") var name: String
-) {
-
-}
+)

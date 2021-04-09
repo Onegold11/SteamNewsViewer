@@ -1,6 +1,7 @@
 package com.example.steamnewsrssviewer.steamappdb
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -31,12 +32,14 @@ abstract class RoomHelper: RoomDatabase() {
         /* Insert Steam app data(name, id) to database(room) */
         fun insertSteamAppsToDB(data: List<RoomSteamApp>) =
             GlobalScope.launch {
-                INSTANCE?.roomSteamAppDao()?.insertAll(data)
+                withContext(Dispatchers.IO) {
+                    INSTANCE?.roomSteamAppDao()?.insertAll(data)
+                }
             }
 
         fun getCount() =
             GlobalScope.launch {
-                INSTANCE?.roomSteamAppDao()?.getCount()
+                    INSTANCE?.roomSteamAppDao()?.getCount()
             }
 
         suspend fun getSteamAppByTitle(title: String): List<RoomSteamApp>? {
