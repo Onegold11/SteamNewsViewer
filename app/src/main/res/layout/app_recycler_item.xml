@@ -19,17 +19,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="textTitle"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
@@ -41,27 +30,48 @@
                 app:srcCompat="@drawable/ic_baseline_favorite_24" />
 
             <TextView
-                android:id="@+id/textAppid"
+                android:id="@+id/textTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:text="TextView"
+                android:paddingLeft="4dp"
+                android:text="textTitle"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="4dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="43dp"
-                android:background="@drawable/custom_checkbox"
-                android:backgroundTint="#0336FF"
-                android:button="@android:color/transparent"
-                android:buttonTint="#0336FF"
-                android:checked="false"
-                android:gravity="center" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textAppid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:maxLines="1"
+                    android:text="TextView"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="43dp"
+                    android:background="@drawable/custom_checkbox"
+                    android:backgroundTint="#0336FF"
+                    android:button="@android:color/transparent"
+                    android:buttonTint="#0336FF"
+                    android:checked="false"
+                    android:gravity="center" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -1,7 +1,7 @@
-package com.example.steamnewsrssviewer.steamappdb.dao
+package com.example.steamnewsrssviewer.database.dao
 
 import androidx.room.*
-import com.example.steamnewsrssviewer.steamappdb.vo.RoomSteamApp
+import com.example.steamnewsrssviewer.database.vo.RoomSteamApp
 
 @Dao
 interface RoomSteamAppDao {

@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer.fragment
+package com.example.steamnewsrssviewer.ui.fragment
 
 import android.content.Context
 import android.os.Build
@@ -12,9 +12,9 @@ import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.databinding.FragmentNewsBinding
 import com.example.steamnewsrssviewer.memuFragment.SteamFragment
 import com.example.steamnewsrssviewer.newsdata.SteamNews
-import com.example.steamnewsrssviewer.recycleradapter.NewsAdapter
-import com.example.steamnewsrssviewer.recycleradapter.data.NewsRecyclerItem
-import com.example.steamnewsrssviewer.retrofitservice.RestfulAdapter
+import com.example.steamnewsrssviewer.ui.recycleradapter.NewsAdapter
+import com.example.steamnewsrssviewer.ui.recycleradapter.data.NewsRecyclerItem
+import com.example.steamnewsrssviewer.network.RestfulAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

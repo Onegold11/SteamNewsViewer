@@ -1,11 +1,11 @@
-package com.example.steamnewsrssviewer.steamappdb
+package com.example.steamnewsrssviewer.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.steamnewsrssviewer.steamappdb.dao.RoomSteamAppDao
-import com.example.steamnewsrssviewer.steamappdb.vo.RoomSteamApp
+import com.example.steamnewsrssviewer.database.dao.RoomSteamAppDao
+import com.example.steamnewsrssviewer.database.vo.RoomSteamApp
 import kotlinx.coroutines.*
 
 @Database(entities = [RoomSteamApp::class], version = 1, exportSchema = false)

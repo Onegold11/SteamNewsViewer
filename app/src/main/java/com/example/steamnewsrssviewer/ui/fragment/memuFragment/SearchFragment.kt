@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer.fragment.memuFragment
+package com.example.steamnewsrssviewer.ui.fragment.memuFragment
 
 import android.content.Context
 import android.os.Bundle
@@ -8,17 +8,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.databinding.FragmentSearchBinding
-import com.example.steamnewsrssviewer.fragment.NewsFragment
+import com.example.steamnewsrssviewer.ui.fragment.NewsFragment
 import com.example.steamnewsrssviewer.memuFragment.AppRecyclerFragment
 import com.example.steamnewsrssviewer.memuFragment.SteamFragment
-import com.example.steamnewsrssviewer.recycleradapter.SteamAppAdapter
-import com.example.steamnewsrssviewer.steamappdb.RoomSteamAppHelper
+import com.example.steamnewsrssviewer.ui.recycleradapter.SteamAppAdapter
+import com.example.steamnewsrssviewer.database.RoomSteamAppHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchFragment : SteamFragment(), AppRecyclerFragment {
+class SearchFragment(val title: String) : SteamFragment(), AppRecyclerFragment {
     private lateinit var binding: FragmentSearchBinding
     private var adapter = SteamAppAdapter(this)
     private var mainActivity: MainActivity? = null
@@ -40,10 +40,8 @@ class SearchFragment : SteamFragment(), AppRecyclerFragment {
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(mainActivity)
 
-        /* button click listener */
-        binding.searchButton.setOnClickListener {
-            showSteamAppByTitle(binding.searEditText.text.toString())
-        }
+        if(this.title != "")
+            showSteamAppByTitle(this.title)
 
         return binding.root
     }

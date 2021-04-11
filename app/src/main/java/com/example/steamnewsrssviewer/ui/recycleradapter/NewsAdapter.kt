@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer.recycleradapter
+package com.example.steamnewsrssviewer.ui.recycleradapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.NewsRecyclerItemBinding
-import com.example.steamnewsrssviewer.recycleradapter.data.NewsRecyclerItem
+import com.example.steamnewsrssviewer.ui.recycleradapter.data.NewsRecyclerItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

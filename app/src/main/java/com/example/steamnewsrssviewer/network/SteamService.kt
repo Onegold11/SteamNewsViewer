@@ -1,11 +1,10 @@
-package com.example.steamnewsrssviewer.retrofitservice
+package com.example.steamnewsrssviewer.network
 
 import com.example.steamnewsrssviewer.newsdata.SteamNews
 import com.example.steamnewsrssviewer.steamappdata.SteamAppData
 import com.example.steamnewsrssviewer.steamappdata.SteamAppDetailData
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SteamService {

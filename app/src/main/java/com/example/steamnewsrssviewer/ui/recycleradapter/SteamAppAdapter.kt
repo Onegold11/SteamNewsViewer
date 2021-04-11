@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer.recycleradapter
+package com.example.steamnewsrssviewer.ui.recycleradapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.AppRecyclerItemBinding
 import com.example.steamnewsrssviewer.memuFragment.AppRecyclerFragment
-import com.example.steamnewsrssviewer.steamappdb.RoomSteamAppHelper
-import com.example.steamnewsrssviewer.steamappdb.vo.RoomSteamApp
+import com.example.steamnewsrssviewer.database.RoomSteamAppHelper
+import com.example.steamnewsrssviewer.database.vo.RoomSteamApp
 
 private const val IMAGE_URL_PRE = "https://cdn.akamai.steamstatic.com/steam/apps/"
 private const val IMAGE_URL_POST = "/header.jpg"

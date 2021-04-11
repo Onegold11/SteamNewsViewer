@@ -1,4 +1,4 @@
-package com.example.steamnewsrssviewer.retrofitservice
+package com.example.steamnewsrssviewer.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
