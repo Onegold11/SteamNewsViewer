@@ -1,15 +1,15 @@
-package com.example.steamnewsrssviewer.ui.recycleradapter
+package com.example.steamnewsrssviewer.adapter.recycler
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.NewsRecyclerItemBinding
-import com.example.steamnewsrssviewer.ui.recycleradapter.data.NewsRecyclerItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,16 +18,16 @@ import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.*
 
+data class NewsRecyclerItem (val title: String, val date: Int, val url: String)
+
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.Holder>() {
     var listData: List<NewsRecyclerItem> = listOf()
     private lateinit var binding: NewsRecyclerItemBinding
-    private lateinit var parent: ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         this.binding =
             NewsRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        this.parent = parent
-        return Holder(this.binding, this.parent)
+        return Holder(this.binding)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) =
@@ -36,46 +36,39 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.Holder>() {
     override fun getItemCount(): Int = listData.size
 
 
-    class Holder(private val binding: NewsRecyclerItemBinding, private val parent: ViewGroup) :
+    class Holder(private val binding: NewsRecyclerItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private lateinit var newsData: NewsRecyclerItem
+        val title = MutableLiveData<String>()
+        val date = MutableLiveData<String>()
+        val imgUrl = MutableLiveData<String>()
+        private val url = MutableLiveData<String>()
 
         init {
-            binding.item.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(newsData.url)
-                parent.context.startActivity(intent)
+            binding.holder = this
+
+            binding.item.setOnClickListener {view ->
+                url.value?.let {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(it)
+                    view.context.startActivity(intent)
+                }
             }
         }
 
         @SuppressLint("SimpleDateFormat")
         fun setNews(news: NewsRecyclerItem) {
-            newsData = news
-            binding.textTitle.text = newsData.title
+            this.title.value = news.title
+            this.url.value = news.url
 
             /* convert UNIX timestamp to string */
             val sdf = SimpleDateFormat("yyyy-MM-dd")
-            val date = sdf.format(Date(newsData.date.toLong() * 1000))
-            binding.textDate.text = date.toString()
+            val date = sdf.format(Date(news.date.toLong() * 1000))
+            this.date.value = date.toString()
 
 
             /* Set preview image */
             GlobalScope.launch(Dispatchers.Main) {
-                val imageUrl = getPreviewImageUrl(newsData.url)
-
-                /* Preview image not exist */
-                if(imageUrl != ""){
-                    Glide.with(itemView)
-                        .load(imageUrl)
-                        .error(R.mipmap.ic_error)
-                        .override(200, 100)
-                        .into(binding.imageView2)
-                }else{
-                    Glide.with(itemView)
-                        .load(R.drawable.ic_baseline_no_image_24)
-                        .override(200, 100)
-                        .into(binding.imageView2)
-                }
+                imgUrl.value = getPreviewImageUrl(news.url)
             }
         }
 

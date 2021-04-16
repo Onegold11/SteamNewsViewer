@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.steamnewsrssviewer.MainActivity
 import com.example.steamnewsrssviewer.databinding.FragmentNewsBinding
-import com.example.steamnewsrssviewer.memuFragment.SteamFragment
 import com.example.steamnewsrssviewer.newsdata.SteamNews
-import com.example.steamnewsrssviewer.ui.recycleradapter.NewsAdapter
-import com.example.steamnewsrssviewer.ui.recycleradapter.data.NewsRecyclerItem
+import com.example.steamnewsrssviewer.adapter.recycler.NewsAdapter
+import com.example.steamnewsrssviewer.adapter.recycler.NewsRecyclerItem
 import com.example.steamnewsrssviewer.network.RestfulAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,7 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NewsFragment(private val id: String) : SteamFragment() {
+class NewsFragment(private val id: String) : Fragment() {
     private lateinit var binding: FragmentNewsBinding
     private lateinit var mainActivity: MainActivity
     private var adapter = NewsAdapter()
@@ -36,7 +36,7 @@ class NewsFragment(private val id: String) : SteamFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {/* view binding */
+    ): View {
         binding = FragmentNewsBinding.inflate(inflater, container, false)
 
         binding.recyclerView2.adapter = adapter
@@ -57,14 +57,14 @@ class NewsFragment(private val id: String) : SteamFragment() {
                     call: Call<SteamNews>,
                     response: Response<SteamNews>
                 ) {
-                    val news = response.body() as SteamNews
+                    response.body()?.let { news ->
+                        /* Collect news */
+                        val items = news.appnews.newsitems.map {
+                            NewsRecyclerItem(it.title, it.date, it.url)
+                        }
 
-                    /* Collect news */
-                    val items = news.appnews.newsitems.map {
-                        NewsRecyclerItem(it.title, it.date, it.url)
+                        adapterNotifyDataChange(items)
                     }
-
-                    adapterNotifyDataChange(items)
                 }
 
                 override fun onFailure(call: Call<SteamNews>, t: Throwable) {}

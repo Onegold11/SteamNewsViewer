@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -31,7 +32,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    viewBinding {
+    dataBinding {
+        enabled = true
+    }
+    viewBinding{
         enabled = true
     }
 }
@@ -48,6 +52,8 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
     implementation "com.google.android.material:material:1.0.0"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -91,4 +97,14 @@ dependencies {
 
     /* jsoup, html parser*/
     implementation 'org.jsoup:jsoup:1.13.1'
+
+    def lifecycle_version = "2.3.0"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+    // License
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 }

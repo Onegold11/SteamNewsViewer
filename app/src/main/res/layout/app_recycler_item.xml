@@ -1,79 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:orientation="vertical">
-
-    <androidx.cardview.widget.CardView
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="holder"
+            type="com.example.steamnewsrssviewer.adapter.recycler.SteamAppAdapter.Holder" />
+    </data>
+    
+    <LinearLayout
+        android:id="@+id/item"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        app:cardCornerRadius="5dp">
+        android:layout_height="200dp"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:adjustViewBounds="false"
-                android:contentDescription="app image"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_baseline_favorite_24" />
-
-            <TextView
-                android:id="@+id/textTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingLeft="4dp"
-                android:text="textTitle"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            android:layout_margin="5dp"
+            app:cardCornerRadius="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textAppid"
+                <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="TextView"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:adjustViewBounds="false"
+                    android:contentDescription="app image"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{holder.imgUrl}"
+                    app:srcCompat="@drawable/ic_baseline_favorite_24" />
 
-                <CheckBox
-                    android:id="@+id/checkBox"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="4dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="43dp"
-                    android:background="@drawable/custom_checkbox"
-                    android:backgroundTint="#0336FF"
-                    android:button="@android:color/transparent"
-                    android:buttonTint="#0336FF"
-                    android:checked="false"
-                    android:gravity="center" />
+                <TextView
+                    android:id="@+id/textTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingLeft="4dp"
+                    android:text="@{holder.title}"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="right|center_vertical"
+                        android:text="App id" />
+
+                    <TextView
+                        android:id="@+id/textAppid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:maxLines="1"
+                        android:text="@{Integer.toString(holder.id)}"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/checkBox"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_margin="4dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="43dp"
+                        android:background="@drawable/custom_checkbox"
+                        android:backgroundTint="#0336FF"
+                        android:button="@android:color/transparent"
+                        android:buttonTint="#0336FF"
+                        android:checked="@{holder.favorite}"
+                        android:gravity="center" />
+
+                </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-</LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</layout>

@@ -12,10 +12,6 @@
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_baseline_favorite_border_24"
             android:title="Favorite App" />
-        <item
-            android:id="@+id/nav_news"
-            android:icon="@drawable/ic_outline_article_24"
-            android:title="Recently news" />
     </group>
     <item android:title="etc">
         <menu>

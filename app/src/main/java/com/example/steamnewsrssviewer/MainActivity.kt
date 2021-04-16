@@ -1,75 +1,97 @@
 package com.example.steamnewsrssviewer
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import com.example.steamnewsrssviewer.ui.fragment.memuFragment.SearchFragment
-import com.example.steamnewsrssviewer.memuFragment.SteamFragment
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.steamnewsrssviewer.ui.fragment.menu.SearchFragment
 import com.example.steamnewsrssviewer.network.RestfulAdapter
 import com.example.steamnewsrssviewer.steamappdata.SteamAppData
 import com.example.steamnewsrssviewer.database.RoomSteamAppHelper
 import com.example.steamnewsrssviewer.database.vo.RoomSteamApp
-import com.google.android.material.navigation.NavigationView
+import com.example.steamnewsrssviewer.databinding.ActivityMainBinding
+import com.example.steamnewsrssviewer.ui.fragment.NewsFragment
+import com.example.steamnewsrssviewer.ui.fragment.menu.FavoriteAppFragment
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
-class MainActivity : AppCompatActivity(){
-    private val fragmentStack = Stack<SteamFragment>()
-    private lateinit var drawer: DrawerLayout
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setDataBinding()
 
-        setLayoutComponentView()
-
-        initDatabaseAndRequestSteamApp()
-    }
-
-    private fun setLayoutComponentView(){
-        /* Navigation Drawer and Tool bar */
         setNavigationDrawerAndToolbar()
 
-        /* Set content fragment */
-        setFragmentAndSave(SearchFragment(""))
-    }
+        initDatabaseAndRequestSteamApp()
 
-    private fun setNavigationDrawerAndToolbar(){
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        drawer = findViewById(R.id.drawer_layout)
-        val navigationView = findViewById<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener{
-            when(it.itemId){
-                R.id.nav_search -> {
-
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.currentMenuFragment.observe(this, {
+            when (it) {
+                FragmentName.SEARCH -> {
+                    setFragment(SearchFragment())
                 }
-                R.id.nav_favorite -> {
-
+                FragmentName.FAVORITE -> {
+                    setFragment(FavoriteAppFragment())
                 }
-                R.id.nav_news -> {
+                else -> {
 
                 }
             }
-            drawer.closeDrawer(GravityCompat.START)
+        })
+        viewModel.appId.observe(this, {
+            setFragment(NewsFragment(it.toString()))
+        })
+    }
+
+    private fun setDataBinding() {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.main = this
+    }
+
+    private fun setNavigationDrawerAndToolbar() {
+        setSupportActionBar(binding.appBar.toolbar)
+
+        binding.navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_search -> {
+                    viewModel.currentMenuFragment.value = FragmentName.SEARCH
+                }
+                R.id.nav_favorite -> {
+                    viewModel.currentMenuFragment.value = FragmentName.FAVORITE
+                }
+                R.id.nav_source -> {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse("https://github.com/Onegold11/SteamNewsViewer")
+                    startActivity(intent)
+                }
+                R.id.nav_license -> {
+                    startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+                }
+            }
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
-        val toggle = ActionBarDrawerToggle(this, drawer, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawer.addDrawerListener(toggle)
+        val toggle = ActionBarDrawerToggle(
+            this, binding.drawerLayout, binding.appBar.toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        navigationView.setCheckedItem(R.id.nav_search)
+        binding.navView.setCheckedItem(R.id.nav_search)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,10 +105,11 @@ class MainActivity : AppCompatActivity(){
         return result
     }
 
-    private fun setQueryTextListener(searchView: SearchView){
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+    private fun setQueryTextListener(searchView: SearchView) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                setFragment(SearchFragment(query!!))
+                viewModel.appTitle.value = query
+                setFragment(SearchFragment())
                 return true
             }
 
@@ -96,7 +119,7 @@ class MainActivity : AppCompatActivity(){
         })
     }
 
-    private fun initDatabaseAndRequestSteamApp(){
+    private fun initDatabaseAndRequestSteamApp() {
         /* Steam app DB(singleton) */
         RoomSteamAppHelper.getSteamAppDao(this)
 
@@ -105,29 +128,16 @@ class MainActivity : AppCompatActivity(){
     }
 
 
-    override fun onBackPressed() {
-        if(drawer.isDrawerOpen(GravityCompat.START)){
-          drawer.closeDrawer(GravityCompat.START)
-        } else if(fragmentStack.size <= 1) {
-            super.onBackPressed()
-        }else{
-            fragmentStack.pop()
-            val previousFragment = fragmentStack.pop()
-            setFragment(previousFragment)
-            fragmentStack.push(previousFragment)
+    private fun setFragment(fragment: Fragment) =
+        with(supportFragmentManager) {
+            /* Remove same fragment */
+            /* Replace fragment and save back stack */
+            beginTransaction()
+                .replace(R.id.frameLayout, fragment).apply {
+                    addToBackStack(null)
+                    commit()
+                }
         }
-    }
-
-    fun setFragmentAndSave(fragment: SteamFragment) {
-        setFragment(fragment)
-        fragmentStack.push(fragment)
-    }
-
-    private fun setFragment(fragment: SteamFragment){
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, fragment)
-            .commit()
-    }
 
 
     /* Search Steam Game and insert database */
@@ -138,9 +148,11 @@ class MainActivity : AppCompatActivity(){
                     call: Call<SteamAppData>,
                     response: Response<SteamAppData>
                 ) {
-                    val steamApps = response.body() as SteamAppData
-                    val list = steamApps.applist.apps.map { RoomSteamApp(it.appid, it.name, false) }
-                    RoomSteamAppHelper.insertSteamAppsToDB(list)
+                    response.body()?.let { app ->
+                        val list =
+                            app.applist.apps.map { RoomSteamApp(it.appid, it.name, false) }
+                        RoomSteamAppHelper.insertSteamAppsToDB(list)
+                    }
                 }
 
                 override fun onFailure(call: Call<SteamAppData>, t: Throwable) {}
