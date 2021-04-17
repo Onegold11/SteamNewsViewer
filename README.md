@@ -47,7 +47,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<p align="center"><img src="image/example.png" alt="icon" width="200" height="400"></p>
+<p align="center"><img src="image/example.PNG" alt="icon" width="200" height="400"></p>
 
 Steam의 Open Api를 사용해 게임 정보와 뉴스 정보를 Retrofit2 라이브러리를 사용해 얻음.
 정보는 Room을 사용해 SQLite 데이터베이스에 저장하고 Glide 라이브러리를 사용해 앱과 뉴스의 미리보기 이미지를 화면에 출력. 네트워크와 데이터베이스의 비동기 처리를 coroutine을 사용해 처리했으며 data binding을 사용해 UI를 다루고 View model과 Live data를 사용해 화면 조작을 다룸.
