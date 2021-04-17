@@ -1,16 +1,23 @@
 package com.example.steamnewsrssviewer.adapter.recycler
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.steamnewsrssviewer.MainViewModel
+import com.example.steamnewsrssviewer.R
 import com.example.steamnewsrssviewer.databinding.AppRecyclerItemBinding
 import com.example.steamnewsrssviewer.database.RoomSteamAppHelper
 import com.example.steamnewsrssviewer.database.vo.RoomSteamApp
+import com.jakewharton.rxbinding4.widget.checkedChanges
 
 private const val IMAGE_URL_PRE = "https://cdn.akamai.steamstatic.com/steam/apps/"
 private const val IMAGE_URL_POST = "/header.jpg"
@@ -20,56 +27,51 @@ class SteamAppAdapter(val fragment: Fragment) : RecyclerView.Adapter<SteamAppAda
     private lateinit var binding: AppRecyclerItemBinding
 
 
+    class Holder(
+        binding: AppRecyclerItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        val title: TextView = binding.textTitle
+        val id: TextView = binding.textAppid
+        val image: ImageView = binding.imageView
+        val favorite: CheckBox = binding.checkBox
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         this.binding =
             AppRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return Holder(this.binding, this)
+        return Holder(this.binding)
     }
 
-    override fun onBindViewHolder(holder: Holder, position: Int) =
-        holder.setNews(listData[position])
 
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        holder.title.text = listData[position].name
+        holder.id.text = listData[position].appid.toString()
+        holder.favorite.isChecked = listData[position].favorite
+
+        Glide.with(fragment.requireActivity())
+            .load(IMAGE_URL_PRE + listData[position].appid + IMAGE_URL_POST)
+            .error(R.drawable.ic_baseline_block_24)
+            .override(200, 100)
+            .into(holder.image)
+
+        /* image click listener */
+        holder.image.setOnClickListener {
+            val viewModel = ViewModelProvider(fragment.requireActivity()).get(MainViewModel::class.java)
+            viewModel.appId.value = listData[position].appid
+        }
+
+        /* favorite button click listener */
+        holder.favorite.setOnClickListener {
+            RoomSteamAppHelper.updateFavoriteApp(
+                RoomSteamApp(
+                    listData[position].appid,
+                    listData[position].name,
+                    !listData[position].favorite
+                )
+            )
+        }
+    }
 
     override fun getItemCount(): Int = listData.size
-
-
-    class Holder(
-        private val binding: AppRecyclerItemBinding,
-        private val adapter: SteamAppAdapter
-    ) : RecyclerView.ViewHolder(binding.root) {
-        val title = MutableLiveData<String>()
-        val id = MutableLiveData<Int>()
-        val imgUrl = MutableLiveData<String>()
-        val isFavorite = MutableLiveData<Boolean>()
-
-        init {
-            binding.holder = this
-
-            /* image click listener */
-            binding.imageView.setOnClickListener {
-                val viewModel = ViewModelProvider(adapter.fragment.requireActivity()).get(MainViewModel::class.java)
-                viewModel.appId.value = this.id.value
-            }
-
-            /* favorite button click listener */
-            binding.checkBox.setOnClickListener {
-                RoomSteamAppHelper.updateFavoriteApp(
-                    RoomSteamApp(
-                        this.id.value!!,
-                        this.title.value!!,
-                        !this.isFavorite.value!!
-                    )
-                )
-            }
-        }
-
-        @SuppressLint("SimpleDateFormat", "SetTextI18n")
-        fun setNews(app: RoomSteamApp) {
-            this.title.value = app.name
-            this.id.value = app.appid
-            this.imgUrl.value = IMAGE_URL_PRE + app.appid + IMAGE_URL_POST
-            this.isFavorite.value = app.favorite
-        }
-    }
 }

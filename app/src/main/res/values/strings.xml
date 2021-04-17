@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SteamNewsCollector</string>
+    <string name="app_name">Steam News View</string>
     <string name="menu_item_search">Search</string>
     <string name="menu_item_favorites">Favorites</string>
     <string name="menu_item_library">Library</string>

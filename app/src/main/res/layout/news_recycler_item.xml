@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="holder"
-            type="com.example.steamnewsrssviewer.adapter.recycler.NewsAdapter.Holder" />
-    </data>
-
     <LinearLayout
         android:id="@+id/item"
         android:layout_width="match_parent"
@@ -34,7 +28,6 @@
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
-                    app:imageUrl="@{holder.imgUrl}"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <LinearLayout
@@ -51,7 +44,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:padding="4dp"
-                        android:text="@{holder.title}"
+                        android:text="title"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -60,7 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{holder.date}"
+                        android:text="date"
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>

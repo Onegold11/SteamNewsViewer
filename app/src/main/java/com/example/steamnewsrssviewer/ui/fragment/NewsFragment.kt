@@ -25,7 +25,7 @@ import retrofit2.Response
 class NewsFragment(private val id: String) : Fragment() {
     private lateinit var binding: FragmentNewsBinding
     private lateinit var mainActivity: MainActivity
-    private var adapter = NewsAdapter()
+    private var adapter = NewsAdapter(this)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

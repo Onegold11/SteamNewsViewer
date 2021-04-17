@@ -1,6 +1,7 @@
 package com.example.steamnewsrssviewer.ui.fragment.menu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 class SearchFragment() : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private var adapter = SteamAppAdapter(this)
+    private lateinit var viewModel: MainViewModel
     private var pressBackTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,9 +35,9 @@ class SearchFragment() : Fragment() {
             val currentTime = System.currentTimeMillis()
             val intervalTime = currentTime - pressBackTime
 
-            if(intervalTime in 0..2000){
+            if (intervalTime in 0..2000) {
                 activity?.finish()
-            }else{
+            } else {
                 pressBackTime = currentTime
                 Toast.makeText(activity, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
             }
@@ -46,10 +48,7 @@ class SearchFragment() : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-        viewModel.appTitle.value?.let {
-            showSteamAppByTitle(it)
-        }
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
@@ -60,18 +59,20 @@ class SearchFragment() : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+
+        showSteamAppList()
     }
 
-    private fun showSteamAppByTitle(title: String) =
+    private fun showSteamAppList() =
         GlobalScope.launch {
-            val queryTitle = "${title}%"
-
-            withContext(Dispatchers.IO) {
-                adapter.listData = RoomSteamAppHelper.getSteamAppByTitle(queryTitle)!!
-                withContext(Dispatchers.Main) {
-                    adapter.notifyDataSetChanged()
-                }
+            val query = "%${viewModel.appTitle.value}%"
+            adapter.listData = RoomSteamAppHelper.getSteamAppByTitle(query)!!
+            Log.d("size", "${adapter.listData.size}")
+            if(adapter.listData.size < 50){
+                adapter.listData.forEach { it -> Log.d("title-id", "${it.name}/${it.appid}") }
+            }
+            withContext(Dispatchers.Main) {
+                adapter.notifyDataSetChanged()
             }
         }
-
 }

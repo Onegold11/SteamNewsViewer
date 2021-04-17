@@ -1,6 +1,7 @@
 package com.example.steamnewsrssviewer.ui.fragment.menu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,6 @@ class FavoriteAppFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setFavoriteApp()
 
         return inflater.inflate(R.layout.fragment_favorite_app, container, false)
     }
@@ -54,6 +54,8 @@ class FavoriteAppFragment : Fragment() {
         binding = DataBindingUtil.bind(view)!!
         binding.recyclerView3.adapter = adapter
         binding.recyclerView3.layoutManager = LinearLayoutManager(activity)
+
+        setFavoriteApp()
     }
 
     private fun setFavoriteApp() =

@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     
-    <data>
-        <variable
-            name="holder"
-            type="com.example.steamnewsrssviewer.adapter.recycler.SteamAppAdapter.Holder" />
-    </data>
-    
     <LinearLayout
         android:id="@+id/item"
         android:layout_width="match_parent"
@@ -35,7 +29,6 @@
                     android:adjustViewBounds="false"
                     android:contentDescription="app image"
                     android:scaleType="centerCrop"
-                    app:imageUrl="@{holder.imgUrl}"
                     app:srcCompat="@drawable/ic_baseline_favorite_24" />
 
                 <TextView
@@ -46,7 +39,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:paddingLeft="4dp"
-                    android:text="@{holder.title}"
+                    android:text="title"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -71,7 +64,7 @@
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:maxLines="1"
-                        android:text="@{Integer.toString(holder.id)}"
+                        android:text="id"
                         android:textColor="@color/black"
                         android:textSize="14sp" />
 
@@ -86,7 +79,7 @@
                         android:backgroundTint="#0336FF"
                         android:button="@android:color/transparent"
                         android:buttonTint="#0336FF"
-                        android:checked="@{holder.favorite}"
+                        android:checked="false"
                         android:gravity="center" />
 
                 </LinearLayout>

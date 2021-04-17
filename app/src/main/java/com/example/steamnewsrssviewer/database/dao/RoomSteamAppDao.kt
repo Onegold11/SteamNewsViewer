@@ -20,7 +20,7 @@ interface RoomSteamAppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(steamApp: RoomSteamApp)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(items: Iterable<RoomSteamApp>)
 
     @Update
