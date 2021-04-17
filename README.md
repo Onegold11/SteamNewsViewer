@@ -132,5 +132,5 @@ Onegold11 - ujini1129@gmail.com
 [issues-shield]: https://img.shields.io/github/issues/Onegold11/SteamNewsViewer.svg?style=for-the-badge
 [issues-url]: https://github.com/Onegold11/SteamNewsViewer/issues
 [license-shield]: https://img.shields.io/github/license/Onegold11/SteamNewsViewer.svg?style=for-the-badge
-[license-url]: https://github.com/Onegold11/SteamNewsViewer/blob/master/LICENSE.txt
+[license-url]: https://github.com/Onegold11/SteamNewsViewer/blob/master/LICENSE
 [product-screenshot]: image/screenshot.png
