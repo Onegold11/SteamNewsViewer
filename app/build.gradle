@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.steamnewsrssviewer"
+        applicationId "com.onegold.steamnewsviewer"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

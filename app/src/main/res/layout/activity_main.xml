@@ -6,7 +6,7 @@
     <data>
         <variable
             name="main"
-            type="com.example.steamnewsrssviewer.MainActivity" />
+            type="com.onegold.steamnewsviewer.MainActivity" />
     </data>
     
     <androidx.drawerlayout.widget.DrawerLayout
